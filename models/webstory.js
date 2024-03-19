@@ -37,6 +37,12 @@ const webstorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  coverphotoheight:{
+    type: String,
+  }, 
+  coverphotowidth:{
+    type: String,
+  },
   date: {
     type: Date,
   },

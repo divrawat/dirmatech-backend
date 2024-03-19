@@ -9,7 +9,7 @@ export const createWebStory = async (req, res) => {
 
   upload.none()(req, res, async (err) => {
     if (err) { return res.status(400).json({ error: 'Something went wrong' }) }
-    const { title, description, slug, coverphoto, slides, link, lastimage, lastheading, ads } = req.body;
+    const { title, description, slug, coverphoto, coverphotoheight, coverphotowidth, slides, link, lastimage, lastheading, ads } = req.body;
 
     if (!title || title.length > 69) { return res.status(400).json({ error: 'Title is required, less than 70 characters' }) }
     if (!description || description.length > 200) { return res.status(400).json({ error: 'Description is required, less than 200 characters' }); }
@@ -22,6 +22,8 @@ export const createWebStory = async (req, res) => {
     story.slug = slugify(slug).toLowerCase();
     story.description = description;
     story.coverphoto = coverphoto;
+    story.coverphotoheight = coverphotoheight;
+    story.coverphotowidth = coverphotowidth;
     const currentDateTimeIST = moment().tz('Asia/Kolkata').format();
     story.date = currentDateTimeIST;
     story.slides = JSON.parse(slides);
@@ -33,7 +35,6 @@ export const createWebStory = async (req, res) => {
     try {
       const savedStory = await story.save();
        fetch(`${FRONTEND}/api/revalidate?path=/web-stories/${story.slug}`, { method: 'POST' })
-       fetch(`${FRONTEND}/api/revalidate?path=/web-stories`, { method: 'POST' })
       return res.status(201).json(savedStory);
     } catch (error) { return res.status(500).json({ error: "Slug should be unique" }) }
   });
@@ -53,13 +54,6 @@ export const fetchWebStoryBySlug = async (req, res) => {
   }
 };
 
-
-export const allstories0 = async (req, res) => {
-  try {
-    const data = await WebStory.find({}).sort({ date: -1 }).select('title slug date coverphoto description').limit(12).exec();
-    res.json(data);
-  } catch (err) { return res.json({ error: "Something Went Wrong" }) }
-};
 
 
 export const allstories = async (req, res) => {
@@ -83,32 +77,12 @@ export const allstories = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-export const allslugs = async (req, res) => {
+export const allwebstoryslugs = async (req, res) => {
   try {
-    const data = await WebStory.find({}).sort({ date: -1 }).select('slug').exec();
+    const data = await WebStory.find({}).sort({ date: -1 }).select('slug date').exec();
     res.json(data);
   } catch (err) { return res.json({ error: "Something Went Wrong" }) }
 };
-
-
-export const sitemap = async (req, res) => {
-  try {
-    const data = await WebStory.find({}).sort({ date: -1 }).select('title slug date coverphoto').exec();
-    res.json(data);
-  } catch (err) { return res.json({ error: "Something Went Wrong" }) }
-};
-
-
 
 
 export const deletestory = async (req, res) => {
@@ -149,6 +123,8 @@ export const updateStory = async (req, res) => {
         else if (key === 'description') { story.description = updateFields.description; }
         else if (key === 'slug') { story.slug = slugify(updateFields.slug).toLowerCase(); }
         else if (key === 'coverphoto') { story.coverphoto = updateFields.coverphoto; }
+        else if (key === 'coverphotoheight') { story.coverphotoheight = updateFields.coverphotoheight; }
+        else if (key === 'coverphotowidth') { story.coverphotowidth = updateFields.coverphotowidth; }
         else if (key === 'ads') { story.ads = updateFields.ads; }
         else if (key === 'slides') { story.slides = JSON.parse(updateFields.slides); }
         else if (key === 'link') { story.link = updateFields.link; }
@@ -157,7 +133,6 @@ export const updateStory = async (req, res) => {
       });
       const savedStory = await story.save();
       await fetch(`${FRONTEND}/api/revalidate?path=/web-stories/${story.slug}`, { method: 'POST' })
-    await  fetch(`${FRONTEND}/api/revalidate?path=/web-stories`, { method: 'POST' })
       return res.status(200).json(savedStory);
     } catch (error) {
       console.error("Error updating web story:", error);
