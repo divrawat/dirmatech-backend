@@ -104,7 +104,7 @@ export const signin = async (req, res) => {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '100d' });
         res.cookie('token', token, { expiresIn: '1d' });
         const { _id, username, name, email, role } = user;
-        res.json({ token, user: { _id, username, name, email, role } });
+        res.json({message: "Sign-in successful", token, user: { _id, username, name, email, role } });
     } catch (err) { res.status(400).json({ error: errorHandler(err) }); }
 };
 

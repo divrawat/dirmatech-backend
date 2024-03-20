@@ -15,7 +15,7 @@ const usersigninvalidator = [ check('email').isEmail().withMessage('Must be a va
 
 router.post('/admin-signup', usersignupvalidator, runvalidation, signup)
 router.post('/admin-signin', usersigninvalidator, runvalidation, signin)
-router.get('/signout', signout);
+router.get('/admin-signout', signout);
 
 
 // router.post('/google-login', googleLogin);
