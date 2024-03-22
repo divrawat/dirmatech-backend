@@ -69,8 +69,8 @@ export const update = async (req, res) => {
         const savedBlog = await blog.save();
         
 
-         await fetch(`${FRONTEND}/api/revalidate?path=/${blog.slug}`, { method: 'POST' });
-        await  fetch(`${FRONTEND}/api/revalidate?path=/`, { method: 'POST' });
+          fetch(`${FRONTEND}/api/revalidate?path=/${blog.slug}`, { method: 'POST' });
+          fetch(`${FRONTEND}/api/revalidate?path=/`, { method: 'POST' });
         return res.status(200).json(savedBlog);
       } catch (error) {
         console.error("Error updating Blog:", error);
@@ -168,18 +168,6 @@ export const read = async (req, res) => {
 };
 
 
-
-
-export const list0 = async (req, res) => {
-  try {
-      const totalCount = await Blog.countDocuments({}).exec();
-      const page = parseInt(req.query.page) || 1;
-      const perPage = 10;
-      const skip = (page - 1) * perPage;
-      const data = await Blog.find({}).populate('postedBy', ' name username').sort({ date: -1 }).select('-_id title slug date postedBy').skip(skip).limit(perPage).exec();
-      res.json({totalBlogs: totalCount , data }); 
-  } catch (err) { console.error('Error fetching Blogs:', err); res.status(500).json({ error: 'Internal Server Error' }); }  
-};
 
 
 export const list = async (req, res) => {
