@@ -133,7 +133,7 @@ export const allblogslugs = async (req, res) => {
 export const feeds = async (req, res) => {
     try {
         const data = await Blog.find({}).sort({ date: -1 })
-            .populate('postedBy', ' name username').select(' title excerpt mdesc slug date body postedBy').limit(7).exec();
+            .populate('postedBy', ' name username').select(' title excerpt mdesc slug date photo body postedBy').limit(7).exec();
         res.json(data);
     } catch (err) { res.json({ error: errorHandler(err) }); }
 };
