@@ -1,8 +1,8 @@
-import Blog from "../models/blog.js";
 import { errorHandler } from "../helpers/dbErrorHandler.js";
+import "dotenv/config.js";
+import Blog from "../models/blog.js";
 import slugify from "slugify";
 import striptags from 'striptags';
-import "dotenv/config.js";
 import multer from 'multer';
 import { FRONTEND } from "../config.js";
 const upload = multer({});
@@ -11,7 +11,6 @@ export const create = async (req, res) => {
     upload.none()(req, res, async (err) => {
       if (err) { return res.status(400).json({ error: 'Something went wrong' }) }
       const { title, description, slug, photo, categories, mtitle, mdesc, date, body } = req.body;
-  
       if (!categories || categories.length === 0) { return res.status(400).json({ error: 'At least one category is required' }) }
   
       let blog = new Blog();

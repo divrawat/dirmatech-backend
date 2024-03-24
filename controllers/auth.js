@@ -98,11 +98,10 @@ export const signin = async (req, res) => {
     const { password } = req.body;
     try {
         const user = await User.findOne({ email: req.body.email }).exec();
-
         if (!user) { return res.status(400).json({ error: 'User with that email does not exist. Please sign up.' }); }
         if (!user.authenticate(password)) { return res.status(400).json({ error: 'Email and password do not match.' }); }
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '100d' });
-        res.cookie('token', token, { expiresIn: '1d' });
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '10d' });
+        res.cookie('token', token, { expiresIn: '10d' });
         const { _id, username, name, email, role } = user;
         res.json({message: "Sign-in successful", token, user: { _id, username, name, email, role } });
     } catch (err) { res.status(400).json({ error: errorHandler(err) }); }
